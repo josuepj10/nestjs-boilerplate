@@ -1,8 +1,9 @@
-import { BeforeInsert, BeforeUpdate, Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { BeforeInsert, BeforeUpdate, Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { ProductImage } from './index';
 
-@Entity()
+@Entity({ name: 'products' }) //rename the entity and db table to products
 export class Product {
-  @PrimaryGeneratedColumn('uuid')
+  @PrimaryGeneratedColumn('uuid') // The id property is a primary key and it is generated automatically by the database
   id: string;
 
   @Column('text', { unique: true })
@@ -28,6 +29,13 @@ export class Product {
 
   @Column('text')
   gender: string;
+
+  @OneToMany( 
+    () => ProductImage,
+    (productImage) => productImage.product, // The productImage entity has a property called product that is related to the Product entity
+    { cascade: true, eager: true } // If you delete a product, all its images will be deleted as well / eager (findOne): when you load a product, its images will be loaded as well
+  )
+  images?: ProductImage[];
 
   @BeforeInsert() // This decorator is used to execute a function before the entity is inserted in the database
   checkSlugInsert() {
