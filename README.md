@@ -27,3 +27,8 @@ yarn start:dev
 ```
 http://localhost:3000/api/seed
 ```
+
+7. OpenApi (Swagger)
+```
+http://localhost:3000/api
+```

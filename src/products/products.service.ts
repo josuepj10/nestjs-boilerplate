@@ -10,7 +10,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { DataSource, Repository } from 'typeorm';
 import { PaginationDto } from 'src/common/dtos/pagination.dto';
 import { validate as isUUID } from 'uuid';
-import { ProductImage, Product } from './entities';
+import { ProductImage, Product, } from './entities';
+import { User } from 'src/auth/entities/user.entity';
 
 @Injectable()
 export class ProductsService {
@@ -27,7 +28,7 @@ export class ProductsService {
     private readonly dataSource: DataSource, //DataSource: Used to connect to the database for the query runner
   ) {}
 
-  async create(createProductDto: CreateProductDto) {
+  async create(createProductDto: CreateProductDto, user: User) {
     try {
       const { images = [], ...productDetails } = createProductDto; //Destructure the images from the createProductDto
 
@@ -39,6 +40,7 @@ export class ProductsService {
             image, //Create a new product image instance for each image
           ) => this.productImageRepository.create({ url: image }),
         ),
+        user: user //Set the user that created the product
       });
       await this.productRepository.save(product); //save the product to the database
 
@@ -98,7 +100,7 @@ export class ProductsService {
     };
   }
 
-  async update(id: string, updateProductDto: UpdateProductDto) {
+  async update(id: string, updateProductDto: UpdateProductDto, user: User) {
     const { images, ...toUpdate } = updateProductDto;
 
     const product = await this.productRepository.preload({
@@ -126,7 +128,7 @@ export class ProductsService {
       } else {
         //??
       }
-
+      product.user = user; //Set the user that updated the product
       await queryRunner.manager.save(product); //save the product but no impact the database yet
       // await this.productRepository.save(product);
 

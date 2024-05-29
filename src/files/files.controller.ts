@@ -14,7 +14,9 @@ import { fileFilter, fileNamer } from './helpers';
 import { diskStorage } from 'multer';
 import { Response } from 'express';
 import { ConfigService } from '@nestjs/config';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Files') // This decorator is used to group the endpoints in the Swagger UI
 @Controller('files')
 export class FilesController {
   
